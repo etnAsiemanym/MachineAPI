@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineService", "Endpoints\MachineService.csproj", "{D794B5FD-D73D-497E-8CD6-3FF7F08D6B96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D794B5FD-D73D-497E-8CD6-3FF7F08D6B96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D794B5FD-D73D-497E-8CD6-3FF7F08D6B96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D794B5FD-D73D-497E-8CD6-3FF7F08D6B96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D794B5FD-D73D-497E-8CD6-3FF7F08D6B96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1DC4896-5FF4-4D5A-B054-8860A18EE78B}
+	EndGlobalSection
+EndGlobal
