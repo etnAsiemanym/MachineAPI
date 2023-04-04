@@ -1,43 +1,33 @@
-﻿using MachineService.DataAccess;
-using MachineService.Models;
+﻿using MachineAPI.BusinessLogic;
+using MachineAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 
-namespace MachineService.Controllers
+namespace MachineAPI.Controllers
 {
     [ApiController]
     public class MalfunctionController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly IMalfunctionService _malfunctionService;
 
-        private readonly IDataRepository _dataRepository;
-
-        public MalfunctionController(IConfiguration config, IDataRepository dataRepository)
+        public MalfunctionController(IMalfunctionService malfunctionService)
         {
-            _config = config;
-            _dataRepository = dataRepository;
+            _malfunctionService = malfunctionService;
         }
 
         [HttpPost]
         [Route("api/[controller]/add")]
-        public Malfunction AddMalfunction(Malfunction model) => _dataRepository.AddMalfunction(model);
+        public Malfunction AddMalfunction(Malfunction model) => _malfunctionService.AddMalfunction(model);
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Malfunction GetMalfunction(string malfunctionName) => _dataRepository.GetMalfunction(malfunctionName);
-
+        public Malfunction GetMalfunction(string malfunctionName) => _malfunctionService.GetMalfunction(malfunctionName);
 
         [HttpDelete]
         [Route("api/[controller]/delete")]
-        public void DeleteMalfunction(string malfunctionName) => _dataRepository.DeleteMalfunction(malfunctionName);
-
+        public void DeleteMalfunction(string malfunctionName) => _malfunctionService.DeleteMalfunction(malfunctionName);
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public Malfunction UpdateMalfunction(Malfunction model) => _dataRepository.UpdateMalfunction(model);
-
-            
-
-    
+        public Malfunction UpdateMalfunction(Malfunction model) => _malfunctionService.UpdateMalfunction(model);
     }
 }

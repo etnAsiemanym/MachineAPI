@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using MachineService.Models;
+using MachineAPI.Models;
 using Npgsql;
 
-namespace MachineService.DataAccess
+namespace MachineAPI.DataAccess
 {
     public class DataRepository : IDataRepository
     {
@@ -14,14 +14,15 @@ namespace MachineService.DataAccess
             _config = config;
         }
 
-        public Machine AddMachine(Machine model)
+        public void AddMachine(string machineName)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
             {
-                connection.Open();
-                connection.Query($"INSERT INTO \"Machines\".machines(machine_name) VALUES ('{model.MachineName}');");
 
-                return model;
+
+                connection.Open();
+                connection.Query($"INSERT INTO \"Machines\".machines(machine_name) VALUES ('{machineName}');");
+
             }
         }
 
@@ -43,29 +44,29 @@ namespace MachineService.DataAccess
             }
         }
 
-        public void DeleteMachine(string MachineName)
+        public void DeleteMachine(string machineName)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
             {
                 connection.Open();
-                var machine = connection.Query($"DELETE FROM \"Machines\".machines WHERE machine_name = '{MachineName}'");
+                var machine = connection.Query($"DELETE FROM \"Machines\".machines WHERE machine_name = '{machineName}'");
 
 
             }
         }
 
-        public void DeleteMalfunction(int id)
+        public void DeleteMalfunction(string malfunctionName)
         {
             throw new NotImplementedException();
         }
 
-        public Machine GetMachine(int id)
+        public Machine GetMachine(string machineName)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
             {
                 Machine model = new Machine();
                 connection.Open();
-                dynamic lines = connection.Query($"select * from \"Machines\".machines where id = { id }", new { id = 0, machine_name = "name" }).FirstOrDefault();
+                dynamic lines = connection.Query($"select * from \"Machines\".machines where id = {id}", new { id = 0, machine_name = "name" }).FirstOrDefault();
 
                 if (lines != null)
                 {
@@ -79,20 +80,22 @@ namespace MachineService.DataAccess
             }
         }
 
-        public Malfunction GetMalfunction(int id)
+        public Malfunction GetMalfunction(string malfunctionName)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
             {
                 Malfunction model = new Malfunction();
                 connection.Open();
-                var lines = connection.Query($"select * from \"Machines\".malfunctions where id = {id}",
-                    new { id = 1,
-                    machine_id = 0,
-                    description = "desc",
-                    priority = "low",
-                    created_date = new DateTime(),
-                    closed_date = new DateTime(),
-                    is_fixed = false
+                var lines = connection.Query($"select * from \"Machines\".malfunctions where id = {malfunctionName}",
+                    new
+                    {
+                        id = 1,
+                        machine_id = 0,
+                        description = "desc",
+                        priority = "low",
+                        created_date = new DateTime(),
+                        closed_date = new DateTime(),
+                        is_fixed = false
                     }).FirstOrDefault();
 
                 if (lines != null)

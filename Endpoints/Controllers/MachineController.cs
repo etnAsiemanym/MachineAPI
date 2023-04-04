@@ -1,42 +1,34 @@
-﻿using MachineService.DataAccess;
-using MachineService.Models;
+﻿using MachineAPI.BusinessLogic;
+using MachineAPI.Models;
+using MachineService.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MachineService.Controllers
+namespace MachineAPI.Controllers
 {
     [ApiController]
     public class MachineController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly IMachineService _machineService;
 
-        private readonly IDataRepository _dataRepository;
-
-        public MachineController(IConfiguration config, IDataRepository dataRepository)
+        public MachineController(IMachineService machineService)
         {
-            _config = config;
-            _dataRepository = dataRepository;
+            _machineService = machineService;
         }
 
         [HttpPost]
         [Route("api/[controller]/add")]
-        public Machine AddMachine(string machineName) => _dataRepository.AddMachine(machineName);
-
+        public void AddMachine(string machineName) => _machineService.AddMachine(machineName);
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Machine GetMachine(string machineName) => _dataRepository.GetMachine(machineName);
-
-
-
+        public Machine GetMachine(string machineName) => _machineService.GetMachine(machineName);
 
         [HttpDelete]
         [Route("api/[controller]/delete")]
-        public void DeleteMachine(string machineName) => _dataRepository.DeleteMachine(machineName);
-
+        public void DeleteMachine(string machineName) => _machineService.DeleteMachine(machineName);
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public Machine UpdateMachine(Machine model) => _dataRepository.UpdateMachine(model);
-
+        public void UpdateMachine(Machine model) => _machineService.UpdateMachine(model);
     }
 }

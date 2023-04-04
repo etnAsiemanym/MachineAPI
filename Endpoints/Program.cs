@@ -1,4 +1,5 @@
-using MachineService.DataAccess;
+using MachineAPI.BusinessLogic;
+using MachineAPI.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IDataRepository, DataRepository>();
+builder.Services.AddSingleton<IMachineService, MachineService>();
+builder.Services.AddSingleton<IMalfunctionService, MalfunctionService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
