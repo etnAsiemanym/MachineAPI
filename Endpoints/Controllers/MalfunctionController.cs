@@ -1,6 +1,7 @@
 ﻿using MachineAPI.BusinessLogic;
 using MachineAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Common;
 
 namespace MachineAPI.Controllers
 {
@@ -16,18 +17,19 @@ namespace MachineAPI.Controllers
 
         [HttpPost]
         [Route("api/[controller]/add")]
-        public Malfunction AddMalfunction(Malfunction model) => _malfunctionService.AddMalfunction(model);
+        public void AddMalfunction(Malfunction model) => _malfunctionService.AddMalfunction(model);
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Malfunction GetMalfunction(string malfunctionName) => _malfunctionService.GetMalfunction(malfunctionName);
-
+        public Malfunction GetMalfunction(string malfunctionName) => _malfunctionService.GetMalfunction(malfunctionName);    
+        
         [HttpDelete]
         [Route("api/[controller]/delete")]
         public void DeleteMalfunction(string malfunctionName) => _malfunctionService.DeleteMalfunction(malfunctionName);
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public Malfunction UpdateMalfunction(Malfunction model) => _malfunctionService.UpdateMalfunction(model);
+        public void UpdateMalfunction(string malfunctionName, Malfunction model) => _malfunctionService.GetMalfunction(malfunctionName);
+        
     }
 }

@@ -1,6 +1,5 @@
 ﻿using MachineAPI.BusinessLogic;
 using MachineAPI.Models;
-using MachineService.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MachineAPI.Controllers
@@ -29,6 +28,6 @@ namespace MachineAPI.Controllers
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public void UpdateMachine(Machine model) => _machineService.UpdateMachine(model);
+        public void UpdateMachine(string machineName, Machine model) => _machineService.UpdateMachine(machineName, model);
     }
 }

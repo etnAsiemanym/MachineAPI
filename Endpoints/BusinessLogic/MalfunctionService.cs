@@ -12,10 +12,10 @@ namespace MachineAPI.BusinessLogic
         {
             _dataRepository = dataRepository;
         }
-        public Malfunction AddMalfunction(Malfunction model) => _dataRepository.AddMalfunction(model);
+        public void AddMalfunction(Malfunction model) => _dataRepository.AddMalfunction(model);
         public Malfunction GetMalfunction(string malfunctionName) => _dataRepository.GetMalfunction(malfunctionName);
         public void DeleteMalfunction(string malfunctionName) => _dataRepository.DeleteMalfunction(malfunctionName);
-        public Malfunction UpdateMalfunction(Malfunction model) => _dataRepository.UpdateMalfunction(model);
+        public void UpdateMalfunction(string malfunctionName, Malfunction model) => _dataRepository.UpdateMalfunction(model.MalfuctionName, model);
 
     }
 }

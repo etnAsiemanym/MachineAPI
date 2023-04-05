@@ -6,8 +6,10 @@ namespace MachineAPI.BusinessLogic
     {
         Machine GetMachine(string machineName);
         void AddMachine(string machineName);
-        void UpdateMachine(Machine model);
+        void UpdateMachine(string machineName, Machine model);
         void DeleteMachine(string machineName);
+
+        Machine AssignMalfunctions(Machine model);
 
     }
 }

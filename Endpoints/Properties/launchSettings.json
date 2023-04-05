@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Endpoints": {
+    "MachineAPI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

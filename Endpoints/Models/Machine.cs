@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace MachineAPI.Models
+﻿namespace MachineAPI.Models
 {
     public class Machine
     {

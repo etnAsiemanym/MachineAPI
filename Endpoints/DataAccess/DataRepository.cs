@@ -1,146 +1,110 @@
 ﻿using Dapper;
 using MachineAPI.Models;
-using Npgsql;
+using MachineAPI.Context;
+using System.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MachineAPI.DataAccess
 {
     public class DataRepository : IDataRepository
     {
-        private readonly IConfiguration _config;
-        //private const string machineDB = _config.GetConnectionString("DefaultConnection");
-
-        public DataRepository(IConfiguration config)
+        private readonly DapperContext _context;
+        public DataRepository(DapperContext context)
         {
-            _config = config;
+            _context = context;
         }
 
         public void AddMachine(string machineName)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
+            var query = "INSERT INTO \"Machines\".machines(machine_name) VALUES(@machine_name)";
+            var parameters = new DynamicParameters();
+            parameters.Add("machine_name", machineName, DbType.String);
+
+            using (var connection = _context.CreateConnection())
             {
-
-
-                connection.Open();
-                connection.Query($"INSERT INTO \"Machines\".machines(machine_name) VALUES ('{machineName}');");
-
+                connection.Execute(query, parameters);
             }
         }
 
-        public Malfunction AddMalfunction(Malfunction model)
+        public void AddMalfunction(Malfunction model)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
+            var query = "INSERT INTO \"Machines\".malfunctions(malfunction_name, machine_name, description, priority, created_date)" +
+                        " VALUES(@malfunction_name, @machine_name, @description, @priority, @created_date)";
+            var parameters = new DynamicParameters();
+            parameters.Add("malfunction_name", model.MalfuctionName, DbType.String);
+            parameters.Add("machine_name", model.MachineName, DbType.String);
+            parameters.Add("description", model.Description, DbType.String);
+            parameters.Add("priority", model.Priority, DbType.String);
+            parameters.Add("created_date", model.CreatedDate, DbType.DateTime);
+            using (var connection = _context.CreateConnection())
             {
-                connection.Open();
-                dynamic malfunction = connection.Query($"INSERT INTO \"Machines\".malfunctions(machine_id, description, priority, created_date) VALUES ({@model.MachineId}, {@model.Description}, {@model.Priority},{@model.CreatedDate});");
-
-                malfunction = connection.Query($"select * from \"Machines\".machines where machine_name = '{model.MachineId}'", new { id = 0, machine_name = "name" }).FirstOrDefault();
-
-                if (malfunction != null)
-                {
-                    model.Id = malfunction.id;
-                    model.MachineId = malfunction.machine_id;
-                }
-                return model;
+                connection.Execute(query, parameters);
             }
         }
 
         public void DeleteMachine(string machineName)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
+            var query = "DELETE FROM \"Machines\".machines WHERE machine_name = @machineName";
+            using (var connection = _context.CreateConnection())
             {
-                connection.Open();
-                var machine = connection.Query($"DELETE FROM \"Machines\".machines WHERE machine_name = '{machineName}'");
-
-
+                connection.Execute(query, new { machineName});
             }
         }
 
         public void DeleteMalfunction(string malfunctionName)
         {
-            throw new NotImplementedException();
+            var query = "DELETE FROM \"Machines\".malfunctions WHERE malfunction_name = @malfunctionName";
+            using (var connection = _context.CreateConnection())
+            {
+                connection.Execute(query, new { malfunctionName });
+            }
         }
 
         public Machine GetMachine(string machineName)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
+            var query = "SELECT * FROM \"Machines\".machines where machine_name = @machineName";
+            using (var connection = _context.CreateConnection())
             {
-                Machine model = new Machine();
-                connection.Open();
-                dynamic lines = connection.Query($"select * from \"Machines\".machines where id = {id}", new { id = 0, machine_name = "name" }).FirstOrDefault();
-
-                if (lines != null)
-                {
-                    model.Id = lines.id;
-                    model.MachineName = lines.machine_name;
-                    //Console.WriteLine(lines);
-                }
-                //Console.WriteLine(model.MachineName);
-
-                return model;
+                var machine = connection.QuerySingleOrDefault<Machine>(query, new { machineName });
+                return machine;
             }
         }
 
         public Malfunction GetMalfunction(string malfunctionName)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
+            var query = "SELECT * FROM \"Machines\".malfunctions where malfunction_name = @malfunctionName";
+            using (var connection = _context.CreateConnection())
             {
-                Malfunction model = new Malfunction();
-                connection.Open();
-                var lines = connection.Query($"select * from \"Machines\".malfunctions where id = {malfunctionName}",
-                    new
-                    {
-                        id = 1,
-                        machine_id = 0,
-                        description = "desc",
-                        priority = "low",
-                        created_date = new DateTime(),
-                        closed_date = new DateTime(),
-                        is_fixed = false
-                    }).FirstOrDefault();
-
-                if (lines != null)
-                {
-                    model.Id = lines.id;
-                    model.MachineId = lines.machine_id;
-                    model.Description = lines.description;
-                    model.Priority = lines.priority;
-                    model.CreatedDate = lines.created_date;
-                    if (lines.is_fixed == null)
-                    {
-                        model.IsFixed = false;
-                    }
-                    else
-                    {
-                        model.ClosedDate = lines.closed_date;
-                        model.IsFixed = lines.is_fixed;
-                    }
-                }
-                //Console.WriteLine(model.MachineName);
-
-                return model;
+                var malfunction = connection.QuerySingleOrDefault<Malfunction>(query, new { malfunctionName });
+                return malfunction;
             }
         }
 
-        public Machine UpdateMachine(Machine model)
+        public void UpdateMachine(string machineName, Machine model)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection("Server=localhost; Database=machineDatabase; User Id=ApiUser; password=test; "))
+            var query = "UPDATE \"Machines\".machines SET machine_name = @machine_name WHERE machine_name = @machine_name ";
+            var parameters = new DynamicParameters();
+            parameters.Add("machine_name", machineName, DbType.String);
+            using (var connection = _context.CreateConnection())
             {
-                connection.Open();
-                dynamic lines = connection.Query($"UPDATE \"Machines\".machines SET machine_name = '{model.MachineName}' WHERE id = '{model.Id}'");
-                lines = connection.Query($"select * from \"Machines\".machines where id = {model.Id}", new { id = 0, machine_name = "name" }).FirstOrDefault();
-
-                if (lines != null)
-                {
-                    model.Id = lines.id;
-                    model.MachineName = lines.machine_name;
-                }
-                return model;
+                    connection.Execute(query, parameters);
             }
         }
 
-        public Malfunction UpdateMalfunction(Malfunction model)
+        public void UpdateMalfunction(string malfunctionName, Malfunction model)
         {
-            throw new NotImplementedException();
+            var query = "UPDATE \"Machines\".malfunctions SET description = @description," +
+                        " priority = @priority, closed_date = @closed_date, isfixed = @isfixed WHERE malfunction_name = @malfunction_name";
+            var parameters = new DynamicParameters();
+            parameters.Add("malfunction_name", malfunctionName, DbType.String);
+            parameters.Add("description", model.Description, DbType.String);
+            parameters.Add("priority", model.Priority, DbType.String);
+            parameters.Add("closed_date", model.ClosedDate, DbType.DateTime);
+            parameters.Add("isfixed", model.IsFixed, DbType.Boolean);
+            using (var connection = _context.CreateConnection())
+            {
+                connection.ExecuteAsync(query, parameters);
+            }
         }
     }
 }
