@@ -1,22 +1,22 @@
-﻿using MachineService.Models;
+﻿using MachineAPI.Models;
 
-namespace MachineService.DataAccess
+namespace MachineAPI.DataAccess
 
 {
     public interface IDataRepository
     {
-        Machine GetMachine(string machineName);
-
-        Machine AddMachine(string machineName);
-
-        Machine UpdateMachine(Machine model);
-
-        void DeleteMachine(string machineName);
-
-        Malfunction GetMalfunction(string malfunctionName);
-        Malfunction AddMalfunction(Malfunction model);
-        Malfunction UpdateMalfunction(Malfunction model);
-        void DeleteMalfunction(string malfunctionName);
         
+        public Task<Machine> GetMachine(string machineName);
+        public Task AddMachine(string machineName);
+        public Task UpdateMachine(string malfunctionName, Machine model);
+        public Task DeleteMachine(string machineName);
+
+        public Task<Malfunction> GetMalfunction(string malfunctionName);
+        public Task<List<Malfunction>> GetN_Malfunctions(int n, int offset);
+        public Task AddMalfunction(Malfunction model);
+        public Task UpdateMalfunction(string malfunctionName, Malfunction model);
+        public Task DeleteMalfunction(string malfunctionName);
+        public Task ChangeStatusMalfunction(string malfunctionName);
+
     }
 }

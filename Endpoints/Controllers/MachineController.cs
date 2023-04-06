@@ -1,42 +1,80 @@
-﻿using MachineService.DataAccess;
-using MachineService.Models;
+﻿using MachineAPI.BusinessLogic;
+using MachineAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MachineService.Controllers
+namespace MachineAPI.Controllers
 {
     [ApiController]
     public class MachineController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly IMachineService _machineService;
 
-        private readonly IDataRepository _dataRepository;
-
-        public MachineController(IConfiguration config, IDataRepository dataRepository)
+        public MachineController(IMachineService machineService)
         {
-            _config = config;
-            _dataRepository = dataRepository;
+            _machineService = machineService;
         }
 
         [HttpPost]
         [Route("api/[controller]/add")]
-        public Machine AddMachine(string machineName) => _dataRepository.AddMachine(machineName);
-
+        public async Task<IActionResult> AddMachine(string machineName)
+        {
+            try
+            {
+                await _machineService.AddMachine(machineName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Machine GetMachine(string machineName) => _dataRepository.GetMachine(machineName);
+        public async Task<IActionResult> GetMachine(string machineName) 
+        {
+            try
+            {
+                var Machine = await _machineService.GetMachine(machineName);
+                if (Machine == null)
+                    return NotFound();
 
-
-
+                return Ok(Machine);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpDelete]
         [Route("api/[controller]/delete")]
-        public void DeleteMachine(string machineName) => _dataRepository.DeleteMachine(machineName);
-
+        public async Task<IActionResult> DeleteMachine(string machineName)
+        {
+            try
+            {
+                await _machineService.DeleteMachine(machineName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public Machine UpdateMachine(Machine model) => _dataRepository.UpdateMachine(model);
-
+        public async Task<IActionResult> UpdateMachine(string machineName, Machine model)
+        {
+            try
+            {
+                await _machineService.UpdateMachine(machineName, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
