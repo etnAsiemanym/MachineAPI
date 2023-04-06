@@ -16,18 +16,65 @@ namespace MachineAPI.Controllers
 
         [HttpPost]
         [Route("api/[controller]/add")]
-        public void AddMachine(string machineName) => _machineService.AddMachine(machineName);
+        public async Task<IActionResult> AddMachine(string machineName)
+        {
+            try
+            {
+                await _machineService.AddMachine(machineName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Machine GetMachine(string machineName) => _machineService.GetMachine(machineName);
+        public async Task<IActionResult> GetMachine(string machineName) 
+        {
+            try
+            {
+                var Machine = await _machineService.GetMachine(machineName);
+                if (Machine == null)
+                    return NotFound();
+
+                return Ok(Machine);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpDelete]
         [Route("api/[controller]/delete")]
-        public void DeleteMachine(string machineName) => _machineService.DeleteMachine(machineName);
+        public async Task<IActionResult> DeleteMachine(string machineName)
+        {
+            try
+            {
+                await _machineService.DeleteMachine(machineName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public void UpdateMachine(string machineName, Machine model) => _machineService.UpdateMachine(machineName, model);
+        public async Task<IActionResult> UpdateMachine(string machineName, Machine model)
+        {
+            try
+            {
+                await _machineService.UpdateMachine(machineName, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

@@ -12,20 +12,12 @@ namespace MachineAPI.BusinessLogic
             _dataRepository = dataRepository;
         }
 
-        public void AddMachine(string machineName)
-        {
-            if (!string.IsNullOrEmpty(machineName)) _dataRepository.AddMachine(machineName);
-        }
-        public Machine GetMachine(string machineName) => _dataRepository.GetMachine(machineName);
+        public Task AddMachine(string machineName) => _dataRepository.AddMachine(machineName);
 
-        public void DeleteMachine(string machineName) => _dataRepository.DeleteMachine(machineName);
+        public Task<Machine> GetMachine(string machineName) => _dataRepository.GetMachine(machineName);
 
-        public void UpdateMachine(string machineName, Machine model) => _dataRepository.UpdateMachine(machineName, model);
+        public Task DeleteMachine(string machineName) => _dataRepository.DeleteMachine(machineName);
 
-        public Machine AssignMalfunctions(Machine model)
-        {
-            var query = "SELECT * FROM \"Machines\".malfunctions as ma where machine_name = @machineName ma JOIN malfunctions mf ON m.machine_name = mf.machine_name";
-            return model;
-        }
+        public Task UpdateMachine(string machineName, Machine model) => _dataRepository.UpdateMachine(machineName, model);
     }
 }

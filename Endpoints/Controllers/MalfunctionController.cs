@@ -1,6 +1,7 @@
 ﻿using MachineAPI.BusinessLogic;
 using MachineAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace MachineAPI.Controllers
 {
@@ -16,26 +17,100 @@ namespace MachineAPI.Controllers
 
         [HttpPost]
         [Route("api/[controller]/add")]
-        public void AddMalfunction(Malfunction model) => _malfunctionService.AddMalfunction(model);
+        public async Task<IActionResult> AddMalfunction(Malfunction model)
+        {
+            try
+            {
+                await _malfunctionService.AddMalfunction(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Malfunction GetMalfunction(string malfunctionName) => _malfunctionService.GetMalfunction(malfunctionName);
+        public async Task<IActionResult> GetMalfunction(string malfunctionName)
+        {
+            try
+            {
+                var Malfunction = await _malfunctionService.GetMalfunction(malfunctionName) ;
+                if (Malfunction == null)
+                    return NotFound();
+
+                return Ok(Malfunction);
+            }
+            catch (Exception ex)
+            {
+                //log error
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpGet]
         [Route("api/[controller]/get_n")]
-        public List<Malfunction> GetN_Malfunctions(int n, int offset) => _malfunctionService.GetN_Malfunctions(n, offset);
+        public async Task<IActionResult> GetN_Malfunctions(int n, int offset)
+        {
+            try
+            {
+                var Malfunctions = await _malfunctionService.GetN_Malfunctions(n, offset);
+                if (Malfunctions == null)
+                    return NotFound();
+
+                return Ok(Malfunctions);
+            }
+            catch (Exception ex)
+            {
+                //log error
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
         [HttpDelete]
         [Route("api/[controller]/delete")]
-        public void DeleteMalfunction(string malfunctionName) => _malfunctionService.DeleteMalfunction(malfunctionName);
-
+        public async Task<IActionResult> DeleteMalfunction(string malfunctionName)
+        {
+            try
+            {
+                await _malfunctionService.DeleteMalfunction(malfunctionName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpPost]
         [Route("api/[controller]/update")]
-        public void UpdateMalfunction(string malfunctionName, Malfunction model) => _malfunctionService.UpdateMalfunction(malfunctionName, model);
+        public async Task<IActionResult> UpdateMalfunction(string malfunctionName, Malfunction model)
+        {
+            try
+            {
+                await _malfunctionService.UpdateMalfunction(malfunctionName, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("api/[controller]/changestatus")]
-        public void ChangeStatusMalfunction(string malfunctionName) => _malfunctionService.ChangeStatusMalfunction(malfunctionName);
+        public async Task<IActionResult> ChangeStatusMalfunction(string malfunctionName)
+                    {
+            try
+            {
+                await _malfunctionService.ChangeStatusMalfunction(malfunctionName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

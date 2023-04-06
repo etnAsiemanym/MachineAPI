@@ -1,15 +1,13 @@
 ﻿using MachineAPI.Models;
+using System.Threading.Tasks;
 
 namespace MachineAPI.BusinessLogic
 {
     public interface IMachineService
     {
-        Machine GetMachine(string machineName);
-        void AddMachine(string machineName);
-        void UpdateMachine(string machineName, Machine model);
-        void DeleteMachine(string machineName);
-
-        Machine AssignMalfunctions(Machine model);
-
+        Task<Machine> GetMachine(string machineName);
+        Task AddMachine(string machineName);
+        Task UpdateMachine(string machineName, Machine model);
+        Task DeleteMachine(string machineName);
     }
 }

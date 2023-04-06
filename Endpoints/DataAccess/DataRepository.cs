@@ -13,7 +13,7 @@ namespace MachineAPI.DataAccess
             _context = context;
         }
 
-        public void AddMachine(string machineName)
+        public async Task AddMachine(string machineName)
         {
             var query = "INSERT INTO \"Machines\".machines(machine_name) VALUES(@machine_name)";
             var parameters = new DynamicParameters();
@@ -21,11 +21,11 @@ namespace MachineAPI.DataAccess
 
             using (var connection = _context.CreateConnection())
             {
-                connection.Execute(query, parameters);
+                await connection.ExecuteAsync(query, parameters);
             }
         }
 
-        public void AddMalfunction(Malfunction model)
+        public async Task AddMalfunction(Malfunction model)
         {
             using (var connection = _context.CreateConnection())
             {
@@ -47,49 +47,45 @@ namespace MachineAPI.DataAccess
                         {
                             parameters.Add("priority", model.Priority.ToLower(), DbType.String);
                         }
-                        else parameters.Add("priority", "mid", DbType.String);
+                        else parameters.Add("priority", "mid", DbType.String);                      
 
-                        
-
-                        connection.Execute(query, parameters);
+                        await connection.ExecuteAsync(query, parameters);
                     }                  
                 }
             }
         }
 
-        public void DeleteMachine(string machineName)
+        public async Task DeleteMachine(string machineName)
         {
             var query = "DELETE FROM \"Machines\".machines WHERE machine_name = @machineName";
             using (var connection = _context.CreateConnection())
             {
-                connection.Execute(query, new { machineName });
+                await connection.ExecuteAsync(query, new { machineName });
             }
         }
 
-        public void DeleteMalfunction(string malfunctionName)
+        public async Task DeleteMalfunction(string malfunctionName)
         {
             var query = "DELETE FROM \"Machines\".malfunctions WHERE malfunction_name = @malfunctionName";
             using (var connection = _context.CreateConnection())
             {
-                connection.Execute(query, new { malfunctionName });
+               await connection.ExecuteAsync(query, new { malfunctionName });
             }
         }
 
-        public Machine GetMachine(string machineName)
+        public async Task<Machine> GetMachine(string machineName)
         {
-            var query = "SELECT * FROM \"Machines\".machines where machine_name = @machineName";
-            //_queryRepository.GetMachineQuery()
+            var query = "SELECT machine_name AS machineName FROM \"Machines\".machines where machine_name = @machineName";
             using (var connection = _context.CreateConnection())
             {
-                var machine = connection.QuerySingleOrDefault<Machine>(query, new { machineName });
-                machine.MachineName = machineName;
-                machine.Malfunctions = GetMalfunctions(machineName);
-                machine.AverageResolutionTimeInDays = CalculateResolutionTime(machine.Malfunctions);
+                var machine = await connection.QuerySingleOrDefaultAsync<Machine>(query, new { machineName });
+                machine.Malfunctions = await GetMalfunctions(machineName);
+                machine.AverageResolutionTimeInDays = await CalculateResolutionTime(machine.Malfunctions);
                 return machine;
             }
         }
 
-        public int CalculateResolutionTime(List<Malfunction> malfunctions)
+        public async Task<int> CalculateResolutionTime(List<Malfunction> malfunctions)
         {
             int totalTime = 0;
             foreach (var malfunction in malfunctions)
@@ -99,55 +95,52 @@ namespace MachineAPI.DataAccess
             return totalTime / malfunctions.Count;
         }
 
-        public Malfunction GetMalfunction(string malfunctionName)
+        public async Task<Malfunction> GetMalfunction(string malfunctionName)
         {
             var query = "SELECT malfunction_name AS malfunctionName, machine_name AS machineName, description, priority, created_date AS createdDate, closed_date AS closedDate," +
                         "isfixed FROM \"Machines\".malfunctions WHERE malfunction_name = @malfunctionName";
             using (var connection = _context.CreateConnection())
             {
-                var malfunction = connection.QuerySingleOrDefault<Malfunction>(query, new { malfunctionName });
-                return malfunction;
+                var malfunction = connection.QuerySingleOrDefaultAsync<Malfunction>(query, new { malfunctionName });
+                return await malfunction;
             }
         }
 
-        public List<Malfunction> GetMalfunctions(string machineName)
+        public async Task<List<Malfunction>> GetMalfunctions(string machineName)
         {
             var query = "SELECT malfunction_name AS malfunctionName, machine_name AS machineName, description, priority, created_date AS createdDate, closed_date AS closedDate," +
                         "isfixed FROM \"Machines\".malfunctions WHERE machine_name = @machineName";
             using (var connection = _context.CreateConnection())
             {
-                var malfunctions = connection.Query<Malfunction>(query, new { machineName });
+                var malfunctions = await connection.QueryAsync<Malfunction>(query, new { machineName });
                 return malfunctions.ToList();
-
             }
         }
 
-        public List<Malfunction> GetN_Malfunctions(int n, int offset)
+        public async Task<List<Malfunction>> GetN_Malfunctions(int n, int offset)
         {
             var query = "SELECT * FROM (SELECT malfunction_name AS malfunctionName, machine_name AS machineName, description, LOWER(priority) as priority, created_date AS createdDate, closed_date AS closedDate," +
                         $"isfixed FROM \"Machines\".malfunctions)sub ORDER BY CASE WHEN (priority = 'low') THEN 1 WHEN (priority = 'mid') THEN 2 WHEN (priority = 'high') THEN 3 END LIMIT {n} OFFSET {offset};";
             using (var connection = _context.CreateConnection())
             {
-                     var malfunctions = connection.Query<Malfunction>(query);
+                     var malfunctions = await connection.QueryAsync<Malfunction>(query);
                      return malfunctions.ToList();
             }
         }
 
-        public void UpdateMachine(string machineName, Machine model)
+        public async Task UpdateMachine(string machineName, Machine model)
         {
             var query = "UPDATE \"Machines\".machines SET machine_name = @machine_name WHERE machine_name = @machine_name ";
             var parameters = new DynamicParameters();
             parameters.Add("machine_name", machineName, DbType.String);
             using (var connection = _context.CreateConnection())
             {
-                    connection.Execute(query, parameters);
+                    await connection.ExecuteAsync(query, parameters);
             }
         }
 
-        public void UpdateMalfunction(string malfunctionName, Malfunction model)
+        public async Task UpdateMalfunction(string malfunctionName, Malfunction model)
         {
-
-
             var query = "UPDATE \"Machines\".malfunctions SET description = @description," +
                         " priority = @priority, closed_date = @closed_date, isfixed = @isfixed WHERE malfunction_name = @malfunction_name";
             var parameters = new DynamicParameters();
@@ -161,16 +154,14 @@ namespace MachineAPI.DataAccess
                 parameters.Add("priority", model.Priority, DbType.String); 
             }
             else parameters.Add("priority", "mid", DbType.String);
-            
-            
-            
+                       
             using (var connection = _context.CreateConnection())
             {
-                    connection.Execute(query, parameters);
+                  await connection.ExecuteAsync(query, parameters);
             }         
         }
 
-        public void ChangeStatusMalfunction(string malfunctionName)
+        public async Task ChangeStatusMalfunction(string malfunctionName)
         {
             var query = "UPDATE \"Machines\".malfunctions SET closed_date = @closed_date, isfixed = @isfixed WHERE malfunction_name = @malfunction_name";
             var parameters = new DynamicParameters();
@@ -180,7 +171,7 @@ namespace MachineAPI.DataAccess
 
             using (var connection = _context.CreateConnection())
             {
-                var malfunction = connection.Execute(query, parameters);
+                var malfunction = await connection.ExecuteAsync(query, parameters);
             }
         }
     }

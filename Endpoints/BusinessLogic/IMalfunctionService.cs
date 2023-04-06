@@ -4,11 +4,11 @@ namespace MachineAPI.BusinessLogic
 {
     public interface IMalfunctionService
     {
-        Malfunction GetMalfunction(string malfunctionName);
-        List<Malfunction> GetN_Malfunctions(int n, int offset);
-        void AddMalfunction(Malfunction model);
-        void UpdateMalfunction(string malfunctionName, Malfunction model);
-        void DeleteMalfunction(string malfunctionName);
-        void ChangeStatusMalfunction(string malfunctionName);
+        Task<Malfunction> GetMalfunction(string malfunctionName);
+        Task<List<Malfunction>> GetN_Malfunctions(int n, int offset);
+        Task AddMalfunction(Malfunction model);
+        Task UpdateMalfunction(string malfunctionName, Malfunction model);
+        Task DeleteMalfunction(string malfunctionName);
+        Task ChangeStatusMalfunction(string malfunctionName);
     }
 }
