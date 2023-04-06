@@ -1,8 +1,7 @@
 ﻿using Dapper;
-using MachineAPI.Models;
 using MachineAPI.Context;
+using MachineAPI.Models;
 using System.Data;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MachineAPI.DataAccess
 {
@@ -47,7 +46,7 @@ namespace MachineAPI.DataAccess
             var query = "DELETE FROM \"Machines\".machines WHERE machine_name = @machineName";
             using (var connection = _context.CreateConnection())
             {
-                connection.Execute(query, new { machineName});
+                connection.Execute(query, new { machineName });
             }
         }
 
@@ -66,17 +65,59 @@ namespace MachineAPI.DataAccess
             using (var connection = _context.CreateConnection())
             {
                 var machine = connection.QuerySingleOrDefault<Machine>(query, new { machineName });
+                machine.Malfunctions = GetMalfunctions(machineName);
+                machine.AverageResolutionTimeInDays = CalculateResolutionTime(machine.Malfunctions);
                 return machine;
             }
         }
 
+        public int CalculateResolutionTime(List<Malfunction> malfunctions)
+        {
+            int totalTime = 0;
+            foreach (var malfunction in malfunctions)
+            {
+                totalTime += Convert.ToInt32((malfunction.ClosedDate - malfunction.CreatedDate).TotalDays);
+            }
+
+            
+
+            return totalTime / malfunctions.Count;
+        }
+
         public Malfunction GetMalfunction(string malfunctionName)
         {
-            var query = "SELECT * FROM \"Machines\".malfunctions where malfunction_name = @malfunctionName";
+            var query = "SELECT malfunction_name AS malfunctionName, machine_name AS machineName, description, priority, created_date AS createdDate, closed_date AS closedDate," +
+                        "isfixed FROM \"Machines\".malfunctions WHERE malfunction_name = @malfunctionName";
             using (var connection = _context.CreateConnection())
             {
                 var malfunction = connection.QuerySingleOrDefault<Malfunction>(query, new { malfunctionName });
                 return malfunction;
+            }
+        }
+
+        public List<Malfunction> GetMalfunctions(string machineName)
+        {
+            var query = "SELECT malfunction_name AS malfunctionName, machine_name AS machineName, description, priority, created_date AS createdDate, closed_date AS closedDate," +
+                        "isfixed FROM \"Machines\".malfunctions WHERE machine_name = @machineName";
+            using (var connection = _context.CreateConnection())
+            {
+                List<Malfunction> malfunctionList = new List<Malfunction>();
+                var malfunctions = connection.Query<Malfunction>(query);
+                malfunctions = malfunctions.ToList();
+                int index = 0;
+                foreach (var malfunction in malfunctions)
+                {
+                    malfunctionList[index].MalfuctionName = malfunction.MalfuctionName;
+                    malfunctionList[index].MachineName = machineName; 
+                    malfunctionList[index].Description = malfunction.Description;
+                    malfunctionList[index].Priority = malfunction.Priority;
+                    malfunctionList[index].CreatedDate = malfunction.CreatedDate;
+                    malfunctionList[index].ClosedDate = malfunction.ClosedDate;
+                    malfunctionList[index].IsFixed = malfunction.IsFixed;
+                    index ++;
+                }
+
+                return malfunctionList;
             }
         }
 
@@ -103,7 +144,7 @@ namespace MachineAPI.DataAccess
             parameters.Add("isfixed", model.IsFixed, DbType.Boolean);
             using (var connection = _context.CreateConnection())
             {
-                connection.ExecuteAsync(query, parameters);
+                connection.Execute(query, parameters);
             }
         }
     }

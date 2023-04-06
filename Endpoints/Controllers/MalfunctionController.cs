@@ -29,7 +29,7 @@ namespace MachineAPI.Controllers
 
         [HttpPost]
         [Route("api/[controller]/update")]
-        public void UpdateMalfunction(string malfunctionName, Malfunction model) => _malfunctionService.GetMalfunction(malfunctionName);
+        public void UpdateMalfunction(string malfunctionName, Malfunction model) => _malfunctionService.UpdateMalfunction(malfunctionName, model);
         
     }
 }

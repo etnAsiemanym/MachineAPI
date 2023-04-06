@@ -4,6 +4,6 @@
     {
         public string MachineName { get; set; }
         public List<Malfunction> Malfunctions { get; set; }
-        public int AverageResolutionTime { get; set; }
+        public int AverageResolutionTimeInDays { get; set; }
     }
 }
