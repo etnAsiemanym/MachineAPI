@@ -1,6 +1,5 @@
 ﻿using MachineAPI.DataAccess;
 using MachineAPI.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MachineAPI.BusinessLogic
 {

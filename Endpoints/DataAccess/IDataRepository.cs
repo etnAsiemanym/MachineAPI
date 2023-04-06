@@ -1,6 +1,4 @@
-﻿using MachineAPI.Context;
-using MachineAPI.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using MachineAPI.Models;
 
 namespace MachineAPI.DataAccess
 

@@ -1,7 +1,6 @@
 ﻿using MachineAPI.BusinessLogic;
 using MachineAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Common;
 
 namespace MachineAPI.Controllers
 {

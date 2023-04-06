@@ -2,23 +2,15 @@
 using MachineAPI.Context;
 using MachineAPI.Models;
 using System.Data;
-using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace MachineAPI.DataAccess
 {
     public class DataRepository : IDataRepository
     {
         private readonly DapperContext _context;
-        private readonly QueryRepository _queryRepository;
         public DataRepository(DapperContext context)
         {
             _context = context;
-        }
-
-        public DataRepository(QueryRepository queryRepository)
-        {
-            _queryRepository = queryRepository;
         }
 
         public void AddMachine(string machineName)
