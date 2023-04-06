@@ -21,8 +21,12 @@ namespace MachineAPI.Controllers
 
         [HttpGet]
         [Route("api/[controller]/get")]
-        public Malfunction GetMalfunction(string malfunctionName) => _malfunctionService.GetMalfunction(malfunctionName);    
-        
+        public Malfunction GetMalfunction(string malfunctionName) => _malfunctionService.GetMalfunction(malfunctionName);
+
+        [HttpGet]
+        [Route("api/[controller]/get_n")]
+        public List<Malfunction> GetN_Malfunctions(int n, int offset) => _malfunctionService.GetN_Malfunctions(n, offset);
+
         [HttpDelete]
         [Route("api/[controller]/delete")]
         public void DeleteMalfunction(string malfunctionName) => _malfunctionService.DeleteMalfunction(malfunctionName);
@@ -30,6 +34,9 @@ namespace MachineAPI.Controllers
         [HttpPost]
         [Route("api/[controller]/update")]
         public void UpdateMalfunction(string malfunctionName, Malfunction model) => _malfunctionService.UpdateMalfunction(malfunctionName, model);
-        
+
+        [HttpPost]
+        [Route("api/[controller]/changestatus")]
+        public void ChangeStatusMalfunction(string malfunctionName) => _malfunctionService.ChangeStatusMalfunction(malfunctionName);
     }
 }

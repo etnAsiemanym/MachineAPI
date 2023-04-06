@@ -14,9 +14,12 @@ namespace MachineAPI.DataAccess
         void DeleteMachine(string machineName);
 
         Malfunction GetMalfunction(string malfunctionName);
+        List<Malfunction> GetN_Malfunctions(int n, int offset);
         void AddMalfunction(Malfunction model);
         void UpdateMalfunction(string malfunctionName, Malfunction model);
         void DeleteMalfunction(string malfunctionName);
+
+        void ChangeStatusMalfunction(string malfunctionName);
 
     }
 }

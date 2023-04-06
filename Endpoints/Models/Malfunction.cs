@@ -2,7 +2,7 @@
 {
     public class Malfunction
     {
-        public string MalfuctionName { get; set; }
+        public string MalfunctionName { get; set; }
 
         public string MachineName { get; set; }
 
